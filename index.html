@@ -14,10 +14,10 @@
     <body>
         <div id="layout">
             <header>
-                <h1>Editor - Markdown编辑器</h1>
+                <h1 id="title">Editor - Markdown编辑器</h1>
             </header>
             <div id="test-editormd">
-                <textarea style="display:none;">### 主要特性
+                <textarea style="display:none;" id="text">### 主要特性
 
 - 支持“标准”Markdown / CommonMark和Github风格的语法，也可变身为代码编辑器；
 - 支持实时预览、图片（跨域）上传、预格式文本/代码/表格插入、代码折叠、搜索替换、只读模式、自定义样式主题和多语言语法高亮等功能；
@@ -412,7 +412,7 @@ Andrew->>China: I am good thanks!
                         imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
                         imageUploadURL : "./php/upload.php",
                         onload : function() {
-                            console.log('onload', this);
+                            //console.log('onload', this);
                             //this.fullscreen();
                             //this.unwatch();
                             //this.watch().fullscreen();
@@ -480,6 +480,119 @@ Andrew->>China: I am good thanks!
                     testEditor.config("tocDropdown", false);
                 });
             });
+        </script>
+
+        <script>
+			// 退出前提示
+			( () => {
+				window.onbeforeunload = function( event ) {
+					return false;
+				}
+			} )();
+		</script>
+		
+		<script>
+			// 拖拽上传文件
+			let i = setTimeout( () => {
+				if ( document.querySelector( ".CodeMirror-code" ) != null ) {
+					var dropzone = document.querySelector( ".CodeMirror-code");
+
+					dropzone.addEventListener( 'dragover', function( e ) {
+						e.preventDefault();
+					} );
+
+					dropzone.addEventListener( 'dragleave', function( e ) {
+						e.preventDefault();
+					} );
+
+					dropzone.addEventListener( 'drop', function( e ) {
+						e.preventDefault();
+
+						if( typeof ( e.dataTransfer.files[ 0 ] ) == "undefined" ) {
+							return;
+						}
+
+						var file = e.dataTransfer.files[ 0 ];
+						var reader = new FileReader();
+						reader.onload = function( e ) {
+							var content = e.target.result;
+							displayFileContent( content );
+						};
+						reader.readAsText( file );
+					} );
+
+					function displayFileContent( content ) {
+						if(testEditor.getValue() != "") {
+							if( confirm( "文本内容不为空，您确定要覆写吗？" ) == true ) {
+								testEditor.setMarkdown( content );
+							}
+						}
+					}
+				}
+			}, 700 );
+        </script>
+        
+        <script>
+			// 下载md文档
+			
+			// 创建下载进程
+        	function downloadTextAsFile ( text, filename ) {
+        		const element = document.createElement( 'a' );
+        		element.setAttribute( 'href', 'data:text/plain;charset=utf-8,' + encodeURIComponent( text ) );
+        		element.setAttribute( 'download', filename );
+
+        		element.style.display = 'none';
+        		document.body.appendChild( element );
+
+        		element.click();
+
+        		document.body.removeChild( element );
+        	}
+
+        	function _test ( text, filename ) {
+        		const _data = testEditor.getValue();
+        		const _filename = 'markdown.md';
+        		downloadTextAsFile( _data, _filename );
+        	}
+
+        </script>
+
+        <script>
+			// 禁止鼠标选中标题，防止在连续点击时触发选中
+			document.getElementById( 'title' ).addEventListener('selectstart', function(e) {
+				e.preventDefault();
+			});
+			
+			// 连续点击标题三次后下载文件
+			var clickCount = 0; // 记录点击次数
+			var clickTimeout; // 储存点击超时的定时器
+
+			function handleClick () {
+				clickCount++; // 点击次数加1
+
+				// 清除之前的点击超时定时器
+				clearTimeout( clickTimeout );
+
+				// 设置新的点击超时定时器，1秒内没有点击则重置点击次数
+				clickTimeout = setTimeout( function() {
+					clickCount = 0;
+				}, 700 );
+
+				// 点击三次后触发相应函数
+				if ( clickCount === 3 ) {
+					triggerFunction();
+					clickCount = 0; // 重置点击次数
+				}
+			}
+
+			function triggerFunction () {
+				_test();
+			}
+
+			// 监听点击事件
+			var clickText = document.getElementById( 'title' );
+			clickText.addEventListener( 'click', handleClick );
+
         </script>
     </body>
 </html>
