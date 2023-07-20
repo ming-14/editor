@@ -597,7 +597,7 @@ Andrew->>China: I am good thanks!
         </script>
         
         <script>
-			// 长按上传文件
+			// 长按上传文件（电脑）
 			var text = document.getElementById( 'title' );
 			var pressTimer;
 
@@ -636,5 +636,42 @@ Andrew->>China: I am good thanks!
 				clearTimeout( pressTimer );
 			};
 		</script>
+		
+		<script>
+			// 长按上传文件（手机）
+			var text = document.getElementById( 'title' );
+			var pressTimer;
+
+			text.touchstart = function() {
+				pressTimer = setTimeout( function() {
+					// 创建一个隐藏的<input>元素
+					var input = document.createElement( 'input' );
+					input.type = 'file';
+					input.style.display = 'none';
+
+					// 当文件选择后触发的事件
+					input.onchange = function( event ) {
+						var file = event.target.files[ 0 ];
+						var reader = new FileReader();
+
+						// 当文件读取完成后触发的事件
+						reader.onload = function( event ) {
+							var content = event.target.result;
+							testEditor.setMarkdown( content );
+						};
+
+						reader.readAsText( file ); // 以文本形式读取文件内容
+					};
+
+					document.body.appendChild( input );
+					input.click(); // 触发文件选择对话框
+					document.body.removeChild( input );
+				}, 3000 ); // 设置长按时间，单位为毫秒
+			};
+
+			text.touchend = function() {
+				clearTimeout( pressTimer );
+			};
+    </script>
     </body>
 </html>
