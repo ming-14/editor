@@ -601,7 +601,7 @@ Andrew->>China: I am good thanks!
 			var text = document.getElementById( 'title' );
 			var pressTimer;
 
-			addEventListener("onmousedown", function() {
+			text.addEventListener("onmousedown", function() {
 				pressTimer = setTimeout( function() {
 					// 创建一个隐藏的<input>元素
 					var input = document.createElement( 'input' );
@@ -628,11 +628,11 @@ Andrew->>China: I am good thanks!
 				}, 3000 ); // 设置长按时间，单位为毫秒
 			});
 
-			addEventListener("onmouseup", function() {
+			text.addEventListener("onmouseup", function() {
 				clearTimeout( pressTimer );
 			});
 
-			addEventListener("onmouseleave", function() {
+			text.addEventListener("onmouseleave", function() {
 				clearTimeout( pressTimer );
 			});
 		</script>
@@ -642,7 +642,7 @@ Andrew->>China: I am good thanks!
 			var text = document.getElementById( 'title' );
 			var pressTimer;
 
-			addEventListener("touchstart", function() {
+			text.addEventListener("touchstart", function() {
 				pressTimer = setTimeout( function() {
 					// 创建一个隐藏的<input>元素
 					var input = document.createElement( 'input' );
@@ -669,7 +669,7 @@ Andrew->>China: I am good thanks!
 				}, 3000 ); // 设置长按时间，单位为毫秒
 			});
 
-			addEventListener("touchend", function() {
+			text.addEventListener("touchend", function() {
 				clearTimeout( pressTimer );
 			});
     </script>
