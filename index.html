@@ -494,8 +494,8 @@ Andrew->>China: I am good thanks!
 		<script>
 			// 拖拽上传文件
 			let i = setTimeout( () => {
-				if ( document.querySelector( ".CodeMirror-code" ) != null ) {
-					var dropzone = document.querySelector( ".CodeMirror-code");
+				if ( document.querySelector( ".CodeMirror-scroll" ) != null ) {
+					var dropzone = document.querySelector( ".CodeMirror-scroll");
 
 					dropzone.addEventListener( 'dragover', function( e ) {
 						e.preventDefault();
@@ -523,10 +523,11 @@ Andrew->>China: I am good thanks!
 
 					function displayFileContent( content ) {
 						if(testEditor.getValue() != "") {
-							if( confirm( "文本内容不为空，您确定要覆写吗？" ) == true ) {
-								testEditor.setMarkdown( content );
+							if( confirm( "文本内容不为空，您确定要覆写吗？" ) == false ) {
+								return;
 							}
 						}
+						testEditor.setMarkdown( content );
 					}
 				}
 			}, 700 );
@@ -594,5 +595,46 @@ Andrew->>China: I am good thanks!
 			clickText.addEventListener( 'click', handleClick );
 
         </script>
+        
+        <script>
+			// 长按上传文件
+			var text = document.getElementById( 'title' );
+			var pressTimer;
+
+			text.onmousedown = function() {
+				pressTimer = setTimeout( function() {
+					// 创建一个隐藏的<input>元素
+					var input = document.createElement( 'input' );
+					input.type = 'file';
+					input.style.display = 'none';
+
+					// 当文件选择后触发的事件
+					input.onchange = function( event ) {
+						var file = event.target.files[ 0 ];
+						var reader = new FileReader();
+
+						// 当文件读取完成后触发的事件
+						reader.onload = function( event ) {
+							var content = event.target.result;
+							testEditor.setMarkdown( content );
+						};
+
+						reader.readAsText( file ); // 以文本形式读取文件内容
+					};
+
+					document.body.appendChild( input );
+					input.click(); // 触发文件选择对话框
+					document.body.removeChild( input );
+				}, 3000 ); // 设置长按时间，单位为毫秒
+			};
+
+			text.onmouseup = function() {
+				clearTimeout( pressTimer );
+			};
+
+			text.onmouseleave = function() {
+				clearTimeout( pressTimer );
+			};
+		</script>
     </body>
 </html>
